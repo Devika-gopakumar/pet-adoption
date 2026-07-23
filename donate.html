@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Donate a Pet</h1>
+  <form method="POST">
+    <label for="donor_name">Your Name</label>
+    <input type="text" id="donor_name" name="donor_name" required>
+
+    <label for="donor_phone">Your Phone</label>
+    <input type="text" id="donor_phone" name="donor_phone" required>
+
+    <label for="pet_species">Pet Species</label>
+    <input type="text" id="pet_species" name="pet_species" placeholder="e.g. Dog, Cat" required>
+
+    <label for="pet_breed">Pet Breed</label>
+    <input type="text" id="pet_breed" name="pet_breed" required>
+
+    <button type="submit">Submit Donation</button>
+  </form>
+{% endblock %}
