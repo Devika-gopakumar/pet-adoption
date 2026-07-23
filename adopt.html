@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Adopt a Pet</h1>
+
+  {% if message %}
+    <div class="message">{{ message }}</div>
+  {% endif %}
+
+  <form method="POST">
+    <label for="adopter_name">Your Name</label>
+    <input type="text" id="adopter_name" name="adopter_name" required>
+
+    <label for="adopter_phone">Your Phone</label>
+    <input type="text" id="adopter_phone" name="adopter_phone" required>
+
+    <label for="pet_id">Pet ID</label>
+    <input type="number" id="pet_id" name="pet_id" required>
+    <small>Check the <a href="{{ url_for('view') }}">available pets page</a> for a Pet ID.</small>
+
+    <button type="submit">Adopt</button>
+  </form>
+{% endblock %}
