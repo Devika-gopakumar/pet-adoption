@@ -1,29 +1,39 @@
--- Sample queries demonstrating JOINs and aggregation on the pet_adoption schema
+# Pet Adoption Management System
 
--- 1. List all available pets along with their donor's details
-SELECT p.pet_id, p.pet_species, p.pet_breed, d.donor_name, d.donor_phone
-FROM Pet p
-JOIN Donor d ON p.donor_id = d.donor_id
-WHERE p.available = 1;
+A small full-stack project for managing pet donations and adoptions, built to practice relational schema design and SQL querying with a Flask front end.
 
--- 2. List all adopters along with the details of the pet they adopted
-SELECT a.adopter_name, a.adopter_phone, p.pet_species, p.pet_breed
-FROM Adopter a
-JOIN Pet p ON a.pet_id = p.pet_id;
+## Tech Stack
+- **Backend:** Python (Flask)
+- **Database:** MySQL
+- **Frontend:** Jinja2 templates (HTML)
 
--- 3. List each donor along with the total number of pets they've donated
-SELECT d.donor_name, COUNT(p.pet_id) AS pets_donated
-FROM Donor d
-LEFT JOIN Pet p ON d.donor_id = p.donor_id
-GROUP BY d.donor_id, d.donor_name;
+## Schema
 
--- 4. Full chain: adopter -> pet -> original donor, for every adopted pet
-SELECT a.adopter_name, p.pet_species, p.pet_breed, d.donor_name
-FROM Adopter a
-JOIN Pet p ON a.pet_id = p.pet_id
-JOIN Donor d ON p.donor_id = d.donor_id;
+Three normalized tables, related by foreign keys:
 
--- 5. Species that have never been adopted (still available)
-SELECT DISTINCT pet_species
-FROM Pet
-WHERE available = 1;
+```
+Donor (donor_id PK, donor_name, donor_phone)
+Pet   (pet_id PK, pet_species, pet_breed, donor_id FK -> Donor, available)
+Adopter (adopter_id PK, adopter_name, adopter_phone, pet_id FK -> Pet)
+```
+
+- Each **Pet** references the **Donor** who gave it up.
+- Each **Adopter** references the **Pet** they adopted.
+- `Pet.available` is a flag flipped to `0` once a pet is adopted, so the app can distinguish pets still up for adoption from ones already placed.
+
+The schema is in [3NF](https://en.wikipedia.org/wiki/Third_normal_form) — no repeating groups, every non-key attribute depends only on its table's primary key, and donor/adopter contact details are stored once each rather than duplicated across pet rows.
+
+## Features
+- **Donate** (`/donate`) — register a new donor and the pet they're giving up for adoption
+- **Adopt** (`/adopt`) — register an adopter against an available pet; marks the pet unavailable on success
+- **View** (`/view`) — lists all currently available pets, joined with their donor's details
+
+## Sample Queries
+
+See [`queries.sql`](./queries.sql) for example JOIN and aggregate queries against this schema (e.g. listing adopters with their pet's details, counting donations per donor).
+
+## Setup
+1. Run `pet_adoption_schema.sql` against a MySQL instance to create `projectdb` and its tables.
+2. Set your DB credentials as environment variables (see `.env.example`) rather than hardcoding them.
+3. `pip install -r requirements.txt`
+4. `python app.py`
